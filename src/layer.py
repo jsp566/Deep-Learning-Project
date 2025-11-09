@@ -14,18 +14,30 @@ class Layer:
         self.dweights = np.zeros_like(self.weights)
         self.dbiases = np.zeros_like(self.biases)
 
-    def forward(self, inputs):
-        self.inputs = inputs
-        self.z = np.dot(inputs, self.weights) + self.biases
+    def forward(self, batch_inputs):
+        self.inputs = batch_inputs
+        self.z = np.dot(batch_inputs, self.weights) + self.biases
         self.a = self.activation_function.forward(self.z)
         return self.a
     
-    def backward(self, dvalues):
-        dz = dvalues * self.activation_function.backward(self.z)
-        self.dweights = np.dot(self.inputs.T, dz)
-        self.dbiases = np.sum(dz, axis=0)
-        dinputs = np.dot(dz, self.weights.T)
-        return dinputs
+    def backward(self, loss_grad):
+        m = loss_grad.shape[0]
+        activation_grad = self.activation_function.backward(self.z)
+        delta = loss_grad * activation_grad
 
-    
+        self.dweights += np.dot(self.inputs.T, delta) / m
+        self.dbiases += np.sum(delta, axis=0) / m
+
+        prev_loss_grad = np.dot(self.weights, delta)
+        return prev_loss_grad
+
+
+    def zero_gradients(self):
+        self.dweights.fill(0)
+        self.dbiases.fill(0)
+
+    def update_params(self, optimizer):
+        optimizer.step(self.weights, self.dweights)
+        optimizer.step(self.biases, self.dbiases)
+
 

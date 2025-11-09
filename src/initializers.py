@@ -21,7 +21,7 @@ class ConstantInitializer(Initializer):
         return np.ones(shape) * self.value
     
 class HeInitializer(Initializer):
-    def __init__(self, a):
+    def __init__(self, a = 1.0):
         self.a = a
     
     def initialize(self, shape):
@@ -29,7 +29,7 @@ class HeInitializer(Initializer):
         return np.random.randn(*shape) * stddev
     
 class GlorotInitializer(Initializer):
-    def __init__(self, a):
+    def __init__(self, a = 1.0):
         self.a = a
     
     def initialize(self, shape):
