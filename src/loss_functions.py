@@ -31,17 +31,26 @@ class MSELoss(LossFunction):
 
 
 class CrossEntropyLoss(LossFunction):
+    def _softmax(self, z):
+        exp_z = np.exp(z - np.max(z, axis=1, keepdims=True))
+        return exp_z / np.sum(exp_z, axis=1, keepdims=True)
+    
     def compute(self, y_true, y_pred):
         # Adding a small epsilon to avoid log(0)
+        y_pred = self._softmax(y_pred)
         epsilon = 1e-15
         y_pred = np.clip(y_pred, epsilon, 1 - epsilon)
         return -np.sum(y_true * np.log(y_pred)) / len(y_true)
     
     def gradient(self, y_true, y_pred):
+        y_pred = self._softmax(y_pred)
         # Adding a small epsilon to avoid division by zero
         epsilon = 1e-15
         y_pred = np.clip(y_pred, epsilon, 1 - epsilon)
-        return - (y_true / y_pred) / len(y_true)
+        grad = (y_pred - y_true) / len(y_true)
+
+
+        return grad
     
 class Metrics:
     @staticmethod

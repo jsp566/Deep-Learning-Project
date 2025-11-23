@@ -12,9 +12,9 @@ class FFNN:
             batch_x = layer.forward(batch_x)
         return batch_x
     
-    def backward_pass(self, batch_y, y_pred):
+    def backward_pass(self, loss_grad):
 
-        loss_grad = self.loss_function.gradient(batch_y, y_pred)
+        #loss_grad = self.loss_function.gradient(batch_y, y_pred)
         
         for layer in reversed(self.layers):
             loss_grad = layer.backward(loss_grad)

@@ -34,10 +34,21 @@ class Trainer:
                 # Compute loss
                 loss = self.loss_function.compute(y_batch, y_pred)
                 epoch_loss += loss
-                
+
+                #print(f"Batch {i+1}/{batches} - Loss: {loss:.4f}")
+                if loss != loss:  # Check for NaN
+                    print(loss)
+                    print(grad)
+                    print(y_batch,y_pred)
+                    for layer in self.model.layers:
+                        print("Layer weights:", layer.weights)
+                        print("Layer biases:", layer.biases)
+                    raise ValueError("Loss is NaN. Training stopped.")
+
                 # Backprop
                 grad = self.loss_function.gradient(y_batch, y_pred)
-                self.model.backward_pass(grad, y_pred)
+                #print("Gradient:", grad)
+                self.model.backward_pass(grad)
 
                 # Update parameters
                 self.model.update_params()
