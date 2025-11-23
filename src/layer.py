@@ -37,7 +37,5 @@ class Layer:
         self.dbiases.fill(0)
 
     def update_params(self, optimizer):
-        optimizer.step(self.weights, self.dweights)
-        optimizer.step(self.biases, self.dbiases)
-
-
+        self.weights = optimizer.step(self.weights, self.dweights)
+        self.biases = optimizer.step(self.biases, self.dbiases)

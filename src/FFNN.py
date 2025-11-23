@@ -26,6 +26,9 @@ class FFNN:
         loss = self.loss_function.compute(batch_y, y_pred)
         self.backward_pass(batch_y, y_pred)
 
+        self.update_params()
+
+    def update_params(self):
         for layer in self.layers:
             layer.update_params(self.optimizer)
             layer.zero_gradients()

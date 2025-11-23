@@ -34,14 +34,13 @@ class Trainer:
                 # Compute loss
                 loss = self.loss_function.compute(y_batch, y_pred)
                 epoch_loss += loss
-
+                
                 # Backprop
                 grad = self.loss_function.gradient(y_batch, y_pred)
                 self.model.backward_pass(grad, y_pred)
 
                 # Update parameters
-                if self.optimizer is not None:
-                    self.optimizer.update(self.model)
+                self.model.update_params()
 
             epoch_loss /= batches
             history["loss"].append(epoch_loss)

@@ -12,3 +12,4 @@ class SGD(Optimizer):
 
     def step(self, parameter, gradient):
         parameter -= self.learning_rate * gradient
+        return parameter
