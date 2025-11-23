@@ -20,11 +20,6 @@ class Logger:
         self.config = config
         self.model = model
         self.loss_function = loss_function
-        self.run = wandb.init(
-            project=project,
-            entity="DTU-Deep-Learning-Project",
-            config=config,
-        )
         #self.run.define_metric("*", step_metric="epoch")
 
     def initialize(self):

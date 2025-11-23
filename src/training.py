@@ -29,7 +29,7 @@ class Trainer:
                 y_batch = y[start:end]
 
                 # Forward pass
-                y_pred = self.model.forward(X_batch)
+                y_pred = self.model.forward_pass(X_batch)
 
                 # Compute loss
                 loss = self.loss_function.compute(y_batch, y_pred)
@@ -37,7 +37,7 @@ class Trainer:
 
                 # Backprop
                 grad = self.loss_function.gradient(y_batch, y_pred)
-                self.model.backward(grad)
+                self.model.backward_pass(grad, y_pred)
 
                 # Update parameters
                 if self.optimizer is not None:
@@ -47,7 +47,7 @@ class Trainer:
             history["loss"].append(epoch_loss)
             # Log metrics
             if self.logger is not None:
-                self.logger.log_metrics(epoch, y, self.model.forward(X))
+                self.logger.log_metrics(epoch, y, self.model.forward_pass(X))
 
             print(f"Epoch {epoch+1}/{epochs} - Loss: {epoch_loss:.4f}")
 
@@ -56,4 +56,4 @@ class Trainer:
         return history
 
     def predict(self, X):
-        return self.model.forward(X)
+        return self.model.forward_pass(X)

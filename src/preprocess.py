@@ -7,6 +7,18 @@ class DataPreprocessor:
         raise NotImplementedError("This method should be overridden by subclasses.")
 
 
+
+class OneHotEncoder(DataPreprocessor):
+    """
+    Converts integer class labels to one-hot encoded vectors.
+    """
+
+    def transform(self, y):
+        one_hot = np.zeros((y.size, y.max() + 1))
+        one_hot[np.arange(y.size), y] = 1
+        return one_hot
+
+
 class ScaleToUnit(DataPreprocessor):
     """
     Scales data to [0,1] range.

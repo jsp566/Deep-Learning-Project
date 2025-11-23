@@ -1,0 +1,11 @@
+2025-11-23 14:33:56,537 INFO    MainThread:24496 [wandb_init.py:setup_run_log_directory():713] Logging user logs to c:\Users\anton\Documents\GitHub\Deep-Learning-Project\wandb\run-20251123_143356-lfxqq4ai\logs\debug.log
+2025-11-23 14:33:56,539 INFO    MainThread:24496 [wandb_init.py:setup_run_log_directory():714] Logging internal logs to c:\Users\anton\Documents\GitHub\Deep-Learning-Project\wandb\run-20251123_143356-lfxqq4ai\logs\debug-internal.log
+2025-11-23 14:33:56,539 INFO    MainThread:24496 [wandb_init.py:init():840] calling init triggers
+2025-11-23 14:33:56,539 INFO    MainThread:24496 [wandb_init.py:init():845] wandb.init called with sweep_config: {}
+config: {'epochs': 10, 'batch_size': 64, 'optimizer': 'SGD', 'learning_rate': 0.01, 'loss_function': 'CrossEntropyLoss', '_wandb': {}}
+2025-11-23 14:33:56,539 INFO    MainThread:24496 [wandb_init.py:init():888] starting backend
+2025-11-23 14:33:56,539 INFO    MainThread:24496 [wandb_init.py:init():891] sending inform_init request
+2025-11-23 14:33:56,547 INFO    MainThread:24496 [wandb_init.py:init():899] backend started and connected
+2025-11-23 14:33:56,557 INFO    MainThread:24496 [wandb_run.py:_label_probe_notebook():1323] probe notebook
+2025-11-23 14:33:56,586 INFO    MainThread:24496 [wandb_init.py:init():969] updated telemetry
+2025-11-23 14:33:56,700 INFO    MainThread:24496 [wandb_init.py:init():993] communicating run to backend with 90.0 second timeout
