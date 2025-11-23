@@ -1,9 +1,25 @@
 import numpy as np
-
+import matplotlib.pyplot as plt
 
 class LossFunction:
     def compute(self, y_true, y_pred):
         raise NotImplementedError("This method should be overridden by subclasses.")
+    
+    def plot_loss_curve(self, loss_history):
+        """
+        Input:
+            loss_history: list of floats, logged loss per epoch
+        """
+        plt.figure(figsize=(7, 4))
+        plt.plot(loss_history, linewidth=2)
+        plt.xlabel("Epoch")
+        plt.ylabel("Loss")
+        plt.title("Training Loss Curve")
+        plt.grid(True)
+        plt.show()
+
+
+
 
 
 class MSELoss(LossFunction):
@@ -26,3 +42,40 @@ class CrossEntropyLoss(LossFunction):
         epsilon = 1e-15
         y_pred = np.clip(y_pred, epsilon, 1 - epsilon)
         return - (y_true / y_pred) / len(y_true)
+    
+class Metrics:
+    @staticmethod
+    def confusion_matrix(y_true, y_pred):
+        if y_true.ndim == 2:
+            y_true = np.argmax(y_true, axis=1)
+
+        pred_labels = np.argmax(y_pred, axis=1)
+
+        num_classes = y_pred.shape[1]
+        cm = np.zeros((num_classes, num_classes), dtype=int)
+
+        for t, p in zip(y_true, pred_labels):
+            cm[t, p] += 1
+
+        return cm
+
+    @staticmethod
+    def plot_confusion_matrix(cm, class_names=None):
+        import matplotlib.pyplot as plt
+        plt.figure(figsize=(6, 5))
+        plt.imshow(cm, interpolation="nearest", cmap="Blues")
+        plt.title("Confusion Matrix")
+        plt.colorbar()
+
+        num_classes = cm.shape[0]
+        tick_marks = np.arange(num_classes)
+        plt.xticks(tick_marks, class_names if class_names else tick_marks)
+        plt.yticks(tick_marks, class_names if class_names else tick_marks)
+
+        # Text labels added later (see fix below)
+        
+        plt.ylabel("True Label")
+        plt.xlabel("Predicted Label")
+        plt.tight_layout()
+        plt.show()
+
