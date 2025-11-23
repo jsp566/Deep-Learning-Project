@@ -28,7 +28,7 @@ class Layer:
         self.dweights += np.dot(self.inputs.T, delta) / m
         self.dbiases += np.sum(delta, axis=0) / m
 
-        prev_loss_grad = np.dot(self.weights, delta)
+        prev_loss_grad = np.dot(delta, self.weights.T)
         return prev_loss_grad
 
 
