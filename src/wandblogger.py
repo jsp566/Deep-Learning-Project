@@ -15,7 +15,7 @@ import wandb
 
 
 class Logger:
-    def __init__(self, dataset="Undefined"):
+    def __init__(self, dataset="Deep-Learning-Project"):
         self.dataset = dataset
 
     def initialize(self, model, loss_function, optimizer):
