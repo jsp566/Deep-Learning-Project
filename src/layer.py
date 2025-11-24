@@ -1,6 +1,9 @@
 import numpy as np
 
 class Layer:
+    def __str__(self):
+        return f"Layer(input_size={self.input_size}, output_size={self.output_size}, weight_initializer={type(self.weight_initializer).__name__}, bias_initializer={type(self.bias_initializer).__name__})"
+
     def __init__(self, input_size, output_size, weight_initializer, bias_initializer):
         self.input_size = input_size
         self.output_size = output_size
@@ -13,7 +16,7 @@ class Layer:
         self.dweights = np.zeros_like(self.weights)
         self.dbiases = np.zeros_like(self.biases)
 
-    def forward(self, batch_inputs):
+    def forward(self, batch_inputs, training=True):
         self.inputs = batch_inputs
         self.z = np.dot(batch_inputs, self.weights) + self.biases
         return self.z

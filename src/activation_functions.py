@@ -3,7 +3,7 @@ import numpy as np
 
 # Activations function base class
 class ActivationFunction:
-    def forward(self, x):
+    def forward(self, x, training=True):
         raise NotImplementedError("This method should be overridden by subclasses.")
 
     def backward(self, x):
@@ -17,7 +17,7 @@ class ActivationFunction:
 
 
 class Identity(ActivationFunction):
-    def forward(self, x):
+    def forward(self, x, training=True):
         self.inputs = x
         return x
 
@@ -25,7 +25,7 @@ class Identity(ActivationFunction):
         return np.ones_like(self.inputs) * loss_grad
 
 class ReLU(ActivationFunction):
-    def forward(self, x):
+    def forward(self, x, training=True):
         self.inputs = x
         return np.maximum(0, x)
 
@@ -35,7 +35,7 @@ class ReLU(ActivationFunction):
 
 
 class Sigmoid(ActivationFunction):
-    def forward(self, x):
+    def forward(self, x, training=True):
         self.inputs = x
         return 1 / (1 + np.exp(-x))
 
@@ -45,7 +45,7 @@ class Sigmoid(ActivationFunction):
 
 
 class Tanh(ActivationFunction):
-    def forward(self, x):
+    def forward(self, x, training=True):
         self.inputs = x
         return np.tanh(x)
 
@@ -55,7 +55,7 @@ class Tanh(ActivationFunction):
 
 
 class LeakyReLU(ActivationFunction):
-    def forward(self, x):
+    def forward(self, x, training=True):
         self.inputs = x
         return np.maximum(0, x) + 0.1 * np.minimum(0, x)
 
