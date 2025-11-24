@@ -16,6 +16,7 @@ class BatchNorm:
 
     def forward(self, batch_inputs, training=True):
         if training:
+            self.inputs = batch_inputs
             self.batch_mean = np.mean(batch_inputs, axis=0)
             self.batch_var = np.var(batch_inputs, axis=0)
 
@@ -48,3 +49,11 @@ class BatchNorm:
         self.dbeta += dbeta
 
         return dinputs
+    
+    def zero_gradients(self):
+        self.dgamma.fill(0)
+        self.dbeta.fill(0)
+
+    def update_params(self, optimizer):
+        self.gamma = optimizer.step(self.gamma, self.dgamma)
+        self.beta = optimizer.step(self.beta, self.dbeta)

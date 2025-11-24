@@ -9,6 +9,12 @@ class ActivationFunction:
     def backward(self, x):
         raise NotImplementedError("This method should be overridden by subclasses.")
 
+    def zero_gradients(self):
+        pass  # Activation functions have no gradients to zero
+
+    def update_params(self, optimizer):
+        pass  # Activation functions have no parameters to update
+
 
 class Identity(ActivationFunction):
     def forward(self, x):

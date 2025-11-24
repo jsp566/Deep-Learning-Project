@@ -17,3 +17,9 @@ class Dropout:
             return grad_output * self.mask
         else:
             raise ValueError("Cannot backpropagate before forward pass during training.")
+        
+    def zero_gradients(self):
+        pass  # Dropout has no gradients to zero
+
+    def update_params(self, optimizer):
+        pass  # Dropout has no parameters to update
