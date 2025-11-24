@@ -12,6 +12,10 @@ class Trainer:
         num_samples = X.shape[0]
         history = {"loss": [], "val_loss": []}
 
+        if self.logger is not None:
+            self.logger.initialize(self.model, self.loss_function, self.optimizer)
+
+
         for epoch in range(epochs):
             if shuffle:
                 idx = np.random.permutation(num_samples)
@@ -34,19 +38,13 @@ class Trainer:
                 loss = self.loss_function.compute(y_batch, y_pred)
                 epoch_loss += loss
 
-                # if loss != loss:  # Check for NaN
-                #     for layer in self.model.layers:
-                #         print("Layer weights:", layer.weights)
-                #         print("Layer biases:", layer.biases)
-                #     raise ValueError("Loss is NaN. Training stopped.")
-
                 # Backprop
                 grad = self.loss_function.gradient(y_batch, y_pred)
-                #print("Gradient:", grad)
                 self.model.backward_pass(grad)
 
                 # Update parameters
                 self.model.update_params()
+
             y_val_pred = self.model.forward_pass(x_val)
             val_loss = self.loss_function.compute(y_val, y_val_pred)
             epoch_loss /= batches
@@ -55,7 +53,7 @@ class Trainer:
 
             # Log metrics
             if self.logger is not None:
-                self.logger.log_metrics(epoch, y, self.model.forward_pass(X))
+                self.logger.log_metrics(epoch, epoch_loss, val_loss)
 
             print(f"Epoch {epoch+1}/{epochs} - Loss: {epoch_loss:.4f} - Val Loss: {val_loss:.4f}")
 

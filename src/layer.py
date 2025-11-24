@@ -1,10 +1,9 @@
 import numpy as np
 
 class Layer:
-    def __init__(self, input_size, output_size, activation_function, weight_initializer, bias_initializer):
+    def __init__(self, input_size, output_size, weight_initializer, bias_initializer):
         self.input_size = input_size
         self.output_size = output_size
-        self.activation_function = activation_function
         self.weight_initializer = weight_initializer
         self.bias_initializer = bias_initializer
 
@@ -17,13 +16,11 @@ class Layer:
     def forward(self, batch_inputs):
         self.inputs = batch_inputs
         self.z = np.dot(batch_inputs, self.weights) + self.biases
-        self.a = self.activation_function.forward(self.z)
-        return self.a
+        return self.z
     
     def backward(self, loss_grad):
         m = loss_grad.shape[0]
-        activation_grad = self.activation_function.backward(loss_grad)
-        delta = activation_grad
+        delta = loss_grad
 
         self.dweights += np.dot(self.inputs.T, delta) / m
         self.dbiases += np.sum(delta, axis=0) / m

@@ -15,33 +15,34 @@ import wandb
 
 
 class Logger:
-    def __init__(self, project, config, model, loss_function):
-        self.project = project
-        self.config = config
-        self.model = model
-        self.loss_function = loss_function
-        #self.run.define_metric("*", step_metric="epoch")
+    def __init__(self, dataset="Undefined"):
+        self.dataset = dataset
 
-    def initialize(self):
+    def initialize(self, model, loss_function, optimizer):
+        config = {
+            "dataset": self.dataset,
+            "model": type(model).__name__,
+            "loss_function": type(loss_function).__name__,
+            "optimizer": type(optimizer).__name__,
+            "learning_rate": optimizer.learning_rate,
+        }
+
         self.run = wandb.init(
-            project=self.project,
+            project=self.dataset,
             entity="DTU-Deep-Learning-Project",
-            config=self.config,
+            config=config,
         )
+        self.run.define_metric("*", step_metric="epoch")
 
-    def log_metrics(self, epoch, y_true, y_pred):
+    def log_metrics(self, epoch, train_loss, val_loss):
         #train_loss = self.loss_function.compute(y_true, y_pred)
-        metrics = {"train/loss": None,
-                   "train/accuracy": None,
-                   "val/loss": None,
-                   "val/accuracy": None
+        metrics = {"epoch": epoch,
+                   "train/loss": train_loss,
+                   "val/loss": val_loss
                    }
         
-        for i, layer in enumerate(self.model.layers):
-            metrics[f"weights/{str(i)}"] = layer.weights
-            metrics[f"biases/{str(i)}"] = layer.biases
-            metrics[f"grad_weights/{str(i)}"] = layer.grad_weights
-            metrics[f"grad_biases/{str(i)}"] = layer.grad_biases
+        #for i, layer in enumerate(self.model.layers):
+            
 
         
         self.run.log(metrics, step=epoch)
