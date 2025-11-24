@@ -1,6 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+
+
 class LossFunction:
     def compute(self, y_true, y_pred):
         raise NotImplementedError("This method should be overridden by subclasses.")
