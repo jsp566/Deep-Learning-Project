@@ -1,6 +1,9 @@
 import numpy as np
 
 class BatchNorm:
+    def __str__(self):
+        return f"BatchNorm(num_features={self.num_features}, momentum={self.momentum}, epsilon={self.epsilon})"
+
     def __init__(self, num_features, momentum=0.1, epsilon=1e-5):
         self.num_features = num_features
         self.momentum = momentum

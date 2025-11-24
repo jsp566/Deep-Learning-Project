@@ -1,6 +1,9 @@
 import numpy as np
 
 class Dropout:
+    def __str__(self):
+        return f"Dropout(drop_probability={self.drop_probability})"
+
     def __init__(self, drop_probability=0.5):
         self.drop_probability = drop_probability
         self.mask = None

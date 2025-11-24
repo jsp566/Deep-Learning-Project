@@ -26,9 +26,10 @@ class Trainer:
     def train(self, X, y, x_val, y_val, early_stopper: EarlyStopping, epochs=10, batch_size=32, shuffle=True):
         num_samples = X.shape[0]
         history = {"loss": [], "val_loss": []}
+        
 
         if self.logger is not None:
-            self.logger.initialize(self.model, self.loss_function, self.optimizer)
+            self.logger.initialize(self.model, self.loss_function, self.optimizer, epochs, batch_size)
 
 
         for epoch in range(epochs):
@@ -47,7 +48,7 @@ class Trainer:
                 y_batch = y[start:end]
 
                 # Forward pass
-                y_pred = self.model.forward_pass(X_batch)
+                y_pred = self.model.forward_pass(X_batch, training=True)
 
                 # Compute loss
                 loss = self.loss_function.compute(y_batch, y_pred)
@@ -60,8 +61,9 @@ class Trainer:
                 # Update parameters
                 self.model.update_params()
 
-            y_val_pred = self.model.forward_pass(x_val)
+            y_val_pred = self.model.forward_pass(x_val, training=False)
             val_loss = self.loss_function.compute(y_val, y_val_pred)
+
             epoch_loss /= batches
             history["loss"].append(epoch_loss)
             history["val_loss"].append(val_loss)
@@ -71,7 +73,7 @@ class Trainer:
 
             # Log metrics
             if self.logger is not None:
-                self.logger.log_metrics(epoch, epoch_loss, val_loss)
+                self.logger.log_metrics(epoch, epoch_loss, val_loss, self.model)
 
             print(f"Epoch {epoch+1}/{epochs} - Loss: {epoch_loss:.4f} - Val Loss: {val_loss:.4f}")
 

@@ -2,3 +2,4 @@ numpy
 wandb
 torch
 torchvision
+nbformat
