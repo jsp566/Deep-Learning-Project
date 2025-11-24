@@ -8,10 +8,9 @@ class Trainer:
         self.optimizer = optimizer
         self.logger = logger
 
-    def train(self, X, y, epochs=10, batch_size=32, shuffle=True):
+    def train(self, X, y, x_val, y_val, epochs=10, batch_size=32, shuffle=True):
         num_samples = X.shape[0]
-        history = {"loss": []}
-        
+        history = {"loss": [], "val_loss": []}
 
         for epoch in range(epochs):
             if shuffle:
@@ -35,15 +34,11 @@ class Trainer:
                 loss = self.loss_function.compute(y_batch, y_pred)
                 epoch_loss += loss
 
-                #print(f"Batch {i+1}/{batches} - Loss: {loss:.4f}")
-                if loss != loss:  # Check for NaN
-                    print(loss)
-                    print(grad)
-                    print(y_batch,y_pred)
-                    for layer in self.model.layers:
-                        print("Layer weights:", layer.weights)
-                        print("Layer biases:", layer.biases)
-                    raise ValueError("Loss is NaN. Training stopped.")
+                # if loss != loss:  # Check for NaN
+                #     for layer in self.model.layers:
+                #         print("Layer weights:", layer.weights)
+                #         print("Layer biases:", layer.biases)
+                #     raise ValueError("Loss is NaN. Training stopped.")
 
                 # Backprop
                 grad = self.loss_function.gradient(y_batch, y_pred)
@@ -52,14 +47,17 @@ class Trainer:
 
                 # Update parameters
                 self.model.update_params()
-
+            y_val_pred = self.model.forward_pass(x_val)
+            val_loss = self.loss_function.compute(y_val, y_val_pred)
             epoch_loss /= batches
             history["loss"].append(epoch_loss)
+            history["val_loss"].append(val_loss)
+
             # Log metrics
             if self.logger is not None:
                 self.logger.log_metrics(epoch, y, self.model.forward_pass(X))
 
-            print(f"Epoch {epoch+1}/{epochs} - Loss: {epoch_loss:.4f}")
+            print(f"Epoch {epoch+1}/{epochs} - Loss: {epoch_loss:.4f} - Val Loss: {val_loss:.4f}")
 
         if self.logger is not None:
             self.logger.finish()
