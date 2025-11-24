@@ -22,8 +22,8 @@ class Layer:
     
     def backward(self, loss_grad):
         m = loss_grad.shape[0]
-        activation_grad = self.activation_function.backward(self.z)
-        delta = loss_grad * activation_grad
+        activation_grad = self.activation_function.backward(loss_grad)
+        delta = activation_grad
 
         self.dweights += np.dot(self.inputs.T, delta) / m
         self.dbiases += np.sum(delta, axis=0) / m
