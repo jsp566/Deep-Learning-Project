@@ -18,43 +18,47 @@ class ActivationFunction:
 
 class Identity(ActivationFunction):
     def forward(self, x):
+        self.inputs = x
         return x
 
-    def backward(self, x):
-        return np.ones_like(x)
-
+    def backward(self, loss_grad):
+        return np.ones_like(self.inputs) * loss_grad
 
 class ReLU(ActivationFunction):
     def forward(self, x):
+        self.inputs = x
         return np.maximum(0, x)
 
-    def backward(self, x):
-        grad = np.where(x > 0, 1, 0)
-        return grad
+    def backward(self, loss_grad):
+        grad = np.where(self.inputs > 0, 1, 0)
+        return grad * loss_grad
 
 
 class Sigmoid(ActivationFunction):
     def forward(self, x):
+        self.inputs = x
         return 1 / (1 + np.exp(-x))
 
-    def backward(self, x):
-        sig = self.forward(x)
-        return sig * (1 - sig)
+    def backward(self, loss_grad):
+        sig = self.forward(self.inputs)
+        return sig * (1 - sig) * loss_grad
 
 
 class Tanh(ActivationFunction):
     def forward(self, x):
+        self.inputs = x
         return np.tanh(x)
 
-    def backward(self, x):
-        tanh_x = self.forward(x)
-        return 1 - tanh_x**2
+    def backward(self, loss_grad):
+        tanh_x = self.forward(self.inputs)
+        return (1 - tanh_x**2) * loss_grad
 
 
 class LeakyReLU(ActivationFunction):
     def forward(self, x):
+        self.inputs = x
         return np.maximum(0, x) + 0.1 * np.minimum(0, x)
 
-    def backward(self, x):
-        grad = np.where(x > 0, 1, 0.1)
-        return grad
+    def backward(self, loss_grad):
+        grad = np.where(self.inputs > 0, 1, 0.1)
+        return grad * loss_grad

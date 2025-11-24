@@ -20,6 +20,15 @@ class LossFunction:
 
 
 
+class Accuracy(LossFunction):
+    def compute(self, y_true, y_pred):
+        if y_true.ndim == 2:
+            y_true = np.argmax(y_true, axis=1)
+
+        pred_labels = np.argmax(y_pred, axis=1)
+        correct = np.sum(y_true == pred_labels)
+        return correct / len(y_true)
+        
 
 
 class MSELoss(LossFunction):
