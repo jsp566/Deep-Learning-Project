@@ -34,8 +34,8 @@ class Logger:
             if layer.__class__.__name__ == "Layer":
                 i += 1
                 config[f"layer_{i}/output_size"] = layer.output_size
-                config[f"layer_{i}/weight_initializer"] = str(layer.weight_initializer)
-                config[f"layer_{i}/bias_initializer"] = str(layer.bias_initializer)
+                config[f"layer_{i}/weight_initializer"] = type(layer.weight_initializer).__name__
+                config[f"layer_{i}/bias_initializer"] = type(layer.bias_initializer).__name__
                 config[f"layer_{i}/Dropout_probability"] = 0.0
                 config[f"layer_{i}/BatchNorm_epsilon"] = None
                 config[f"layer_{i}/BatchNorm_momentum"] = None
@@ -53,11 +53,13 @@ class Logger:
         )
         self.run.define_metric("*", step_metric="epoch")
 
-    def log_metrics(self, epoch, train_loss, val_loss, model):
+    def log_metrics(self, epoch, train_loss, train_accuracy, val_loss, val_accuracy, model):
         #train_loss = self.loss_function.compute(y_true, y_pred)
         metrics = {"epoch": epoch,
                    "train/loss": train_loss,
+                   "train/accuracy": train_accuracy,
                    "val/loss": val_loss,
+                   "val/accuracy": val_accuracy,
                    }
         
         i = 0
@@ -66,13 +68,13 @@ class Logger:
                 i += 1
                 metrics[f"layer_{i}/weights"] = wandb.Histogram(layer.weights)
                 metrics[f"layer_{i}/biases"] = wandb.Histogram(layer.biases)
-                metrics[f"layer_{i}/weight_gradients"] = wandb.Histogram(layer.dweights)
-                metrics[f"layer_{i}/bias_gradients"] = wandb.Histogram(layer.dbiases)
+                #metrics[f"layer_{i}/weight_gradients"] = wandb.Histogram(layer.dweights)
+                #metrics[f"layer_{i}/bias_gradients"] = wandb.Histogram(layer.dbiases)
             elif layer.__class__.__name__ == "BatchNorm":
                 metrics[f"layer_{i}/gamma"] = wandb.Histogram(layer.gamma)
                 metrics[f"layer_{i}/beta"] = wandb.Histogram(layer.beta)
-                metrics[f"layer_{i}/gamma_gradients"] = wandb.Histogram(layer.dgamma)
-                metrics[f"layer_{i}/beta_gradients"] = wandb.Histogram(layer.dbeta)
+                #metrics[f"layer_{i}/gamma_gradients"] = wandb.Histogram(layer.dgamma)
+                #metrics[f"layer_{i}/beta_gradients"] = wandb.Histogram(layer.dbeta)
 
             
 

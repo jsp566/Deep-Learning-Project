@@ -1,14 +1,14 @@
 import wandb
 from src import preprocess, activation_functions, initializers, layer, loss_functions, optimizers, FFNN, training, wandblogger, dropout, batchnorm
 
-def train_sweep(entity, project, config, x_train, y_train, x_valid, y_valid):
+def train_sweep(entity, project, config, x_train, y_train, x_valid, y_valid, input_size = 28*28):
     wandb.init(entity=entity,
         project=project)        
     cfg = wandb.config  
     # building layers dynamically
     layers = []
 
-    input_size = 28 * 28
+    input_size = input_size
     prev_size = input_size
     # hidden layers
     for hidden_size in cfg.layer_sizes:     

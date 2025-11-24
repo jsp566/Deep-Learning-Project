@@ -26,5 +26,4 @@ class FFNN:
 
 
     def pred(self, X):
-        # TBD
         return self.forward_pass(X, training=False)
