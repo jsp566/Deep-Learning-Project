@@ -6,6 +6,10 @@ def train_sweep(entity, project, config, x_train, y_train, x_valid, y_valid, inp
         project=project)        
     cfg = wandb.config  
     # building layers dynamically
+    if cfg.normalize_data:
+        zScorenormalize = preprocess.ZScoreNormalize()
+        x_train = zScorenormalize.transform(x_train)
+        x_valid = zScorenormalize.transform(x_valid)
     layers = []
 
     input_size = input_size
@@ -44,8 +48,8 @@ def train_sweep(entity, project, config, x_train, y_train, x_valid, y_valid, inp
     if cfg.optimizer == "sgd":
         optimizer = optimizers.SGD(learning_rate=cfg.learning_rate)
     """elif cfg.optimizer == "adam":
-        optimizer = optimizers.Adam(learning_rate=cfg.learning_rate)"""
-    
+        optimizer = optimizers.Adam(learning_rate=cfg.learning_rate)
+    """
     model = FFNN.FFNN(
         layers=layers,
         loss_function=loss_functions.CrossEntropyLoss(),
