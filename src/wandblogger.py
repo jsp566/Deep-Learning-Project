@@ -51,35 +51,62 @@ class Logger:
             entity="DTU-Deep-Learning-Project",
             config=config,
         )
-        self.run.define_metric("*", step_metric="epoch")
+        self.run.define_metric("*", step_metric="batch")
+        self.run.define_metric("train/epoch_loss", step_metric="epoch", overwrite=True)
+        self.run.define_metric("train/epoch_accuracy", step_metric="epoch", overwrite=True)
+        self.run.define_metric("val/epoch_loss", step_metric="epoch", overwrite=True)
+        self.run.define_metric("val/epoch_accuracy", step_metric="epoch", overwrite=True)
 
-    def log_metrics(self, epoch, train_loss, train_accuracy, val_loss, val_accuracy, model):
-        #train_loss = self.loss_function.compute(y_true, y_pred)
-        metrics = {"epoch": epoch,
+
+    def log_batch_metrics(self, batch, train_loss, train_accuracy, model):
+        metrics = {"batch": batch,
                    "train/loss": train_loss,
                    "train/accuracy": train_accuracy,
-                   "val/loss": val_loss,
-                   "val/accuracy": val_accuracy,
                    }
         
         i = 0
         for layer in model.layers:
             if layer.__class__.__name__ == "Layer":
                 i += 1
-                metrics[f"layer_{i}/weights"] = wandb.Histogram(layer.weights)
-                metrics[f"layer_{i}/biases"] = wandb.Histogram(layer.biases)
+                metrics[f"layer_{i}/batch_weights"] = wandb.Histogram(layer.weights)
+                metrics[f"layer_{i}/batch_biases"] = wandb.Histogram(layer.biases)
+                metrics[f"layer_{i}/batch_weight_gradients"] = wandb.Histogram(layer.dweights)
+                metrics[f"layer_{i}/batch_bias_gradients"] = wandb.Histogram(layer.dbiases)
+            elif layer.__class__.__name__ == "BatchNorm":
+                metrics[f"layer_{i}/batch_gamma"] = wandb.Histogram(layer.gamma)
+                metrics[f"layer_{i}/batch_beta"] = wandb.Histogram(layer.beta)
+                metrics[f"layer_{i}/batch_gamma_gradients"] = wandb.Histogram(layer.dgamma)
+                metrics[f"layer_{i}/batch_beta_gradients"] = wandb.Histogram(layer.dbeta)
+
+        self.run.log(metrics, step=batch)
+
+    def log_metrics(self, epoch, train_loss, train_accuracy, val_loss, val_accuracy, model):
+        #train_loss = self.loss_function.compute(y_true, y_pred)
+        metrics = {"epoch": epoch,
+                   "train/epoch_loss": train_loss,
+                   "train/epoch_accuracy": train_accuracy,
+                   "val/epoch_loss": val_loss,
+                   "val/epoch_accuracy": val_accuracy,
+                   }
+        
+        i = 0
+        for layer in model.layers:
+            if layer.__class__.__name__ == "Layer":
+                i += 1
+                #metrics[f"layer_{i}/weights"] = wandb.Histogram(layer.weights)
+                #metrics[f"layer_{i}/biases"] = wandb.Histogram(layer.biases)
                 #metrics[f"layer_{i}/weight_gradients"] = wandb.Histogram(layer.dweights)
                 #metrics[f"layer_{i}/bias_gradients"] = wandb.Histogram(layer.dbiases)
-            elif layer.__class__.__name__ == "BatchNorm":
-                metrics[f"layer_{i}/gamma"] = wandb.Histogram(layer.gamma)
-                metrics[f"layer_{i}/beta"] = wandb.Histogram(layer.beta)
+            #elif layer.__class__.__name__ == "BatchNorm":
+                #metrics[f"layer_{i}/gamma"] = wandb.Histogram(layer.gamma)
+                #metrics[f"layer_{i}/beta"] = wandb.Histogram(layer.beta)
                 #metrics[f"layer_{i}/gamma_gradients"] = wandb.Histogram(layer.dgamma)
                 #metrics[f"layer_{i}/beta_gradients"] = wandb.Histogram(layer.dbeta)
 
             
 
         
-        self.run.log(metrics, step=epoch)
+        self.run.log(metrics)
 
     def finish(self):
         self.run.finish()

@@ -32,7 +32,7 @@ class Trainer:
         if self.logger is not None:
             self.logger.initialize(self.model, self.loss_function, self.optimizer, epochs, batch_size)
 
-
+        batch = 0
         for epoch in range(epochs):
             if shuffle:
                 idx = np.random.permutation(num_samples)
@@ -56,14 +56,20 @@ class Trainer:
                 loss = self.loss_function.compute(y_batch, y_pred)
                 epoch_loss += loss
 
-                epoch_accuracy += Accuracy_metric.compute(y_batch, y_pred)
+                accuracy = Accuracy_metric.compute(y_batch, y_pred)
+                epoch_accuracy += accuracy
 
                 # Backprop
                 grad = self.loss_function.gradient(y_batch, y_pred)
                 self.model.backward_pass(grad)
 
+                # Log batch metrics
+                if self.logger is not None:
+                    self.logger.log_batch_metrics(batch, loss, accuracy, self.model)
+
                 # Update parameters
                 self.model.update_params()
+                batch += 1
 
             y_val_pred = self.model.forward_pass(x_val, training=False)
             val_loss = self.loss_function.compute(y_val, y_val_pred)
