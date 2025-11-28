@@ -16,7 +16,7 @@ class SGD(Optimizer):
 
 class Adam(Optimizer):
     def __init__(self, learning_rate=0.001, beta1=0.9, beta2=0.999, epsilon=1e-8):
-        self.lr = learning_rate
+        self.learning_rate = learning_rate
         self.beta1 = beta1
         self.beta2 = beta2
         self.epsilon = epsilon
@@ -44,6 +44,6 @@ class Adam(Optimizer):
         m_hat = m / (1 - self.beta1 ** self.t)
         v_hat = v / (1 - self.beta2 ** self.t)
 
-        parameter -= self.lr * m_hat / (np.sqrt(v_hat) + self.epsilon)
+        parameter -= self.learning_rate * m_hat / (np.sqrt(v_hat) + self.epsilon)
 
         return parameter

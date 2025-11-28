@@ -11,7 +11,17 @@ def train_sweep(entity, project, config, x_train, y_train, x_valid, y_valid, inp
         x_train = zScorenormalize.transform(x_train)
         x_valid = zScorenormalize.transform(x_valid)
     layers = []
+    if cfg.kernel_initializer == "HeInitializer()":
+        kernel_initializer = initializers.HeInitializer()
+    elif cfg.kernel_initializer == "GlorotInitializer()":
+        kernel_initializer = initializers.GlorotInitializer()
 
+    if cfg.activation_function == "ReLU()":
+        activation_function = activation_functions.ReLU
+    elif cfg.activation_function == "LeakyReLU()":
+        activation_function = activation_functions.LeakyReLU
+    elif cfg.activation_function == "Tanh()":
+        activation_function = activation_functions.Tanh
     input_size = input_size
     prev_size = input_size
     # hidden layers
@@ -20,7 +30,7 @@ def train_sweep(entity, project, config, x_train, y_train, x_valid, y_valid, inp
             layer.Layer(
                 input_size=prev_size,
                 output_size=hidden_size,
-                weight_initializer=initializers.HeInitializer(),
+                weight_initializer=kernel_initializer,
                 bias_initializer=initializers.ConstantInitializer(0),
             )
         )
@@ -28,7 +38,7 @@ def train_sweep(entity, project, config, x_train, y_train, x_valid, y_valid, inp
         if cfg.use_batchnorm:
             layers.append(batchnorm.BatchNorm(hidden_size))
 
-        layers.append(activation_functions.ReLU())
+        layers.append(activation_function())
         # add dropout if specified, had issues with 0.5 dropout one round
         if cfg.dropout_rate > 0:
             layers.append(dropout.Dropout(cfg.dropout_rate))
@@ -40,16 +50,16 @@ def train_sweep(entity, project, config, x_train, y_train, x_valid, y_valid, inp
         layer.Layer(
             input_size=prev_size,
             output_size=10,
-            weight_initializer=initializers.HeInitializer(),
+            weight_initializer=kernel_initializer,
             bias_initializer=initializers.ConstantInitializer(0),
         )
     )
     #add ADAM when it has been implemented
     if cfg.optimizer == "sgd":
         optimizer = optimizers.SGD(learning_rate=cfg.learning_rate)
-    """elif cfg.optimizer == "adam":
+    elif cfg.optimizer == "adam":
         optimizer = optimizers.Adam(learning_rate=cfg.learning_rate)
-    """
+
     model = FFNN.FFNN(
         layers=layers,
         loss_function=loss_functions.CrossEntropyLoss(),
