@@ -54,8 +54,8 @@ class Logger:
         self.run.define_metric("*", step_metric="batch")
         self.run.define_metric("train/epoch_loss", step_metric="epoch", overwrite=True)
         self.run.define_metric("train/epoch_accuracy", step_metric="epoch", overwrite=True)
-        self.run.define_metric("val/epoch_loss", step_metric="epoch", overwrite=True)
-        self.run.define_metric("val/epoch_accuracy", step_metric="epoch", overwrite=True)
+        self.run.define_metric("val/loss", step_metric="epoch", overwrite=True)
+        self.run.define_metric("val/accuracy", step_metric="epoch", overwrite=True)
 
 
     def log_batch_metrics(self, batch, train_loss, train_accuracy, model):
@@ -89,8 +89,8 @@ class Logger:
         metrics = {"epoch": epoch,
                    "train/epoch_loss": train_loss,
                    "train/epoch_accuracy": train_accuracy,
-                   "val/epoch_loss": val_loss,
-                   "val/epoch_accuracy": val_accuracy,
+                   "val/loss": val_loss,
+                   "val/accuracy": val_accuracy,
                    }
         
         i = 0
