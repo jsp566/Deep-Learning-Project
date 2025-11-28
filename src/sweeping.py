@@ -1,10 +1,25 @@
 import wandb
-from src import preprocess, activation_functions, initializers, layer, loss_functions, optimizers, FFNN, training, wandblogger, dropout, batchnorm
+from src import (
+    preprocess,
+    activation_functions,
+    initializers,
+    layer,
+    loss_functions,
+    optimizers,
+    FFNN,
+    training,
+    wandblogger,
+    dropout,
+    batchnorm,
+    regularization,
+)
 
-def train_sweep(entity, project, config, x_train, y_train, x_valid, y_valid, input_size = 28*28):
-    wandb.init(entity=entity,
-        project=project)        
-    cfg = wandb.config  
+
+def train_sweep(
+    entity, project, config, x_train, y_train, x_valid, y_valid, input_size=28 * 28
+):
+    wandb.init(entity=entity, project=project)
+    cfg = wandb.config
     # building layers dynamically
     if cfg.normalize_data:
         zScorenormalize = preprocess.ZScoreNormalize()
@@ -25,7 +40,7 @@ def train_sweep(entity, project, config, x_train, y_train, x_valid, y_valid, inp
     input_size = input_size
     prev_size = input_size
     # hidden layers
-    for hidden_size in cfg.layer_sizes:     
+    for hidden_size in cfg.layer_sizes:
         layers.append(
             layer.Layer(
                 input_size=prev_size,
@@ -54,7 +69,7 @@ def train_sweep(entity, project, config, x_train, y_train, x_valid, y_valid, inp
             bias_initializer=initializers.ConstantInitializer(0),
         )
     )
-    #add ADAM when it has been implemented
+    # add ADAM when it has been implemented
     if cfg.optimizer == "sgd":
         optimizer = optimizers.SGD(learning_rate=cfg.learning_rate)
     elif cfg.optimizer == "adam":
@@ -62,21 +77,26 @@ def train_sweep(entity, project, config, x_train, y_train, x_valid, y_valid, inp
 
     model = FFNN.FFNN(
         layers=layers,
-        loss_function=loss_functions.CrossEntropyLoss(),
-        optimizer=optimizer,
     )
 
     logger = wandblogger.Logger(project)
-    trainer = training.Trainer(model=model, loss_function=loss_functions.CrossEntropyLoss(), optimizer=optimizer, logger=logger)
+    trainer = training.Trainer(
+        model=model,
+        loss_function=loss_functions.CrossEntropyLoss(),
+        optimizer=optimizer,
+        logger=logger,
+        regularization=regularization.L2Regularization(cfg.l2_lambda),
+    )
 
     history = trainer.train(
         x_train,
-        y_train,x_val=x_valid,
+        y_train,
+        x_val=x_valid,
         y_val=y_valid,
         early_stopper=training.EarlyStopping(),
         epochs=cfg.epochs,
         batch_size=cfg.batch_size,
-        shuffle=True
+        shuffle=True,
     )
 
     wandb.finish()

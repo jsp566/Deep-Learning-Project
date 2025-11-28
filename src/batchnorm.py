@@ -35,7 +35,7 @@ class BatchNorm:
 
         return out
 
-    def backward(self, loss_grad):
+    def backward(self, loss_grad, regularization=None):
         m = loss_grad.shape[0]
 
         dbeta = np.sum(loss_grad, axis=0)

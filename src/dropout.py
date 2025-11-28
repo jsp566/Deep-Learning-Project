@@ -15,7 +15,7 @@ class Dropout:
         else:
             return x
 
-    def backward(self, grad_output):
+    def backward(self, grad_output, regularization=None):
         if self.mask is not None:
             return grad_output * self.mask
         else:

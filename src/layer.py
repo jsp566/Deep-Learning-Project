@@ -21,11 +21,12 @@ class Layer:
         self.z = np.dot(batch_inputs, self.weights) + self.biases
         return self.z
     
-    def backward(self, loss_grad):
+    def backward(self, loss_grad, regularization):
         m = loss_grad.shape[0]
         delta = loss_grad
 
-        self.dweights += np.dot(self.inputs.T, delta) / m
+        regularization_term = regularization.compute_gradient(self.weights)
+        self.dweights += np.dot(self.inputs.T, delta) / m + regularization_term
         self.dbiases += np.sum(delta, axis=0) / m
 
         prev_loss_grad = np.dot(delta, self.weights.T)

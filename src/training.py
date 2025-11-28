@@ -18,11 +18,12 @@ class EarlyStopping:
         return self.count >= self.patience
 
 class Trainer:
-    def __init__(self, model, loss_function, optimizer=None, logger=None):
+    def __init__(self, model, loss_function, optimizer, regularization, logger=None):
         self.model = model
         self.loss_function = loss_function
         self.optimizer = optimizer
         self.logger = logger
+        self.regularization = regularization
 
     def train(self, X, y, x_val, y_val, early_stopper: EarlyStopping, epochs=10, batch_size=32, shuffle=True):
         num_samples = X.shape[0]
@@ -54,25 +55,29 @@ class Trainer:
 
                 # Compute loss
                 loss = self.loss_function.compute(y_batch, y_pred)
-                epoch_loss += loss
+                regularization_loss = self.regularization.compute_penalty(self.model)
+                epoch_loss += loss + regularization_loss
 
                 accuracy = Accuracy_metric.compute(y_batch, y_pred)
                 epoch_accuracy += accuracy
 
                 # Backprop
                 grad = self.loss_function.gradient(y_batch, y_pred)
-                self.model.backward_pass(grad)
+                self.model.backward_pass(grad, regularization=self.regularization)
 
                 # Log batch metrics
                 if self.logger is not None:
                     self.logger.log_batch_metrics(batch, loss, accuracy, self.model)
 
                 # Update parameters
-                self.model.update_params()
+                self.model.update_params(self.optimizer)
                 batch += 1
 
             y_val_pred = self.model.forward_pass(x_val, training=False)
             val_loss = self.loss_function.compute(y_val, y_val_pred)
+            val_regularization_loss = self.regularization.compute_penalty(self.model)
+            val_loss += val_regularization_loss
+
             val_accuracy = Accuracy_metric.compute(y_val, y_val_pred)
             epoch_loss /= batches
             epoch_accuracy /= batches

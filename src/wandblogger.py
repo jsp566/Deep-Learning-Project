@@ -1,5 +1,5 @@
 import wandb
-
+import numpy as np
 
 # config should be a dictionary containing hyperparameters and settings
 # initializer
@@ -70,15 +70,19 @@ class Logger:
                 i += 1
                 metrics[f"layer_{i}/batch_weights"] = wandb.Histogram(layer.weights)
                 metrics[f"layer_{i}/batch_biases"] = wandb.Histogram(layer.biases)
-                metrics[f"layer_{i}/batch_weight_gradients"] = wandb.Histogram(layer.dweights)
-                metrics[f"layer_{i}/batch_bias_gradients"] = wandb.Histogram(layer.dbiases)
+                #metrics[f"layer_{i}/batch_weight_gradients"] = wandb.Histogram(layer.dweights)
+                #metrics[f"layer_{i}/batch_bias_gradients"] = wandb.Histogram(layer.dbiases)
+                metrics[f"layer_{i}/batch_weight_gradient_norm"] = np.linalg.norm(layer.dweights)
+                metrics[f"layer_{i}/batch_bias_gradient_norm"] = np.linalg.norm(layer.dbiases)
             elif layer.__class__.__name__ == "BatchNorm":
                 metrics[f"layer_{i}/batch_gamma"] = wandb.Histogram(layer.gamma)
                 metrics[f"layer_{i}/batch_beta"] = wandb.Histogram(layer.beta)
-                metrics[f"layer_{i}/batch_gamma_gradients"] = wandb.Histogram(layer.dgamma)
-                metrics[f"layer_{i}/batch_beta_gradients"] = wandb.Histogram(layer.dbeta)
+                #metrics[f"layer_{i}/batch_gamma_gradients"] = wandb.Histogram(layer.dgamma)
+                #metrics[f"layer_{i}/batch_beta_gradients"] = wandb.Histogram(layer.dbeta)
+                metrics[f"layer_{i}/batch_gamma_gradient_norm"] = np.linalg.norm(layer.dgamma)
+                metrics[f"layer_{i}/batch_beta_gradient_norm"] = np.linalg.norm(layer.dbeta)
 
-        self.run.log(metrics, step=batch)
+        self.run.log(metrics, commit=False)
 
     def log_metrics(self, epoch, train_loss, train_accuracy, val_loss, val_accuracy, model):
         #train_loss = self.loss_function.compute(y_true, y_pred)
