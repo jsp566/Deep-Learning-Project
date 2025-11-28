@@ -2,5 +2,5 @@
 /src/__pycache__
 /.venv
 /wandb
-/src/__pycache__
 *.pyc
+/Output

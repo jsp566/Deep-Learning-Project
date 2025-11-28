@@ -23,7 +23,7 @@ class Adam(Optimizer):
 
         self.m = {}   
         self.v = {}   
-        self.t = 0   
+        self.t = {}   
 
     def step(self, parameter, gradient):
         param_id = id(parameter)
@@ -31,18 +31,19 @@ class Adam(Optimizer):
         if param_id not in self.m:
             self.m[param_id] = np.zeros_like(parameter)
             self.v[param_id] = np.zeros_like(parameter)
+            self.t[param_id] = 0
 
         m = self.m[param_id]
         v = self.v[param_id]
+        self.t[param_id] += 1
 
-        self.t += 1
         # Update biased first moment estimate
         m[:] = self.beta1 * m + (1 - self.beta1) * gradient
         v[:] = self.beta2 * v + (1 - self.beta2) * (gradient ** 2)
 
         # Bias correction
-        m_hat = m / (1 - self.beta1 ** self.t)
-        v_hat = v / (1 - self.beta2 ** self.t)
+        m_hat = m / (1 - self.beta1 ** self.t[param_id])
+        v_hat = v / (1 - self.beta2 ** self.t[param_id])
 
         parameter -= self.learning_rate * m_hat / (np.sqrt(v_hat) + self.epsilon)
 
