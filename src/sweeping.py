@@ -13,6 +13,8 @@ from src import (
     batchnorm,
     regularization,
 )
+import pickle
+import os
 
 
 def train_sweep(
@@ -108,5 +110,9 @@ def train_sweep(
         batch_size=cfg.batch_size,
         shuffle=True,
     )
+    filepath = os.path.join(logger.run.dir, "model.pkl")
+
+    with open(filepath, "wb") as output_file:
+        pickle.dump(model, output_file)
 
     wandb.finish()
