@@ -23,13 +23,12 @@ class Layer:
     
     def backward(self, loss_grad, regularization):
         m = loss_grad.shape[0]
-        delta = loss_grad
 
         regularization_term = regularization.compute_gradient(self.weights)
-        self.dweights += np.dot(self.inputs.T, delta) / m + regularization_term
-        self.dbiases += np.sum(delta, axis=0) / m
+        self.dweights = np.dot(self.inputs.T, loss_grad) / m + regularization_term
+        self.dbiases = np.sum(loss_grad, axis=0) / m
 
-        prev_loss_grad = np.dot(delta, self.weights.T)
+        prev_loss_grad = np.dot(loss_grad, self.weights.T)
         return prev_loss_grad
 
 
@@ -38,5 +37,5 @@ class Layer:
         self.dbiases.fill(0)
 
     def update_params(self, optimizer):
-        self.weights = optimizer.step(self.weights, self.dweights)
-        self.biases = optimizer.step(self.biases, self.dbiases)
+        optimizer.step(self.weights, self.dweights)
+        optimizer.step(self.biases, self.dbiases)

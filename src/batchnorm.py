@@ -48,8 +48,8 @@ class BatchNorm:
 
         dinputs = dnormalized / np.sqrt(self.batch_var + self.epsilon) + dvar * 2 * (self.inputs - self.batch_mean) / m + dmean / m
 
-        self.dgamma += dgamma
-        self.dbeta += dbeta
+        self.dgamma = dgamma
+        self.dbeta = dbeta
 
         return dinputs
     
@@ -58,5 +58,5 @@ class BatchNorm:
         self.dbeta.fill(0)
 
     def update_params(self, optimizer):
-        self.gamma = optimizer.step(self.gamma, self.dgamma)
-        self.beta = optimizer.step(self.beta, self.dbeta)
+        optimizer.step(self.gamma, self.dgamma)
+        optimizer.step(self.beta, self.dbeta)

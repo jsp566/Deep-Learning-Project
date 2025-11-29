@@ -12,7 +12,6 @@ class SGD(Optimizer):
 
     def step(self, parameter, gradient):
         parameter -= self.learning_rate * gradient
-        return parameter
 
 class Adam(Optimizer):
     def __init__(self, learning_rate=0.001, beta1=0.9, beta2=0.999, epsilon=1e-8):
@@ -44,5 +43,3 @@ class Adam(Optimizer):
         v_hat = self.v[param_id] / (1 - self.beta2 ** self.t[param_id])
 
         parameter -= self.learning_rate * m_hat / (np.sqrt(v_hat) + self.epsilon)
-
-        return parameter

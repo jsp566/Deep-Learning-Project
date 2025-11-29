@@ -20,7 +20,7 @@ class FFNN:
     def update_params(self, optimizer):
         for layer in self.layers:
             layer.update_params(optimizer)
-            layer.zero_gradients()
+            #layer.zero_gradients()
 
 
     def pred(self, X):
