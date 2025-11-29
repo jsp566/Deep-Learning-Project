@@ -75,8 +75,6 @@ class Trainer:
 
             y_val_pred = self.model.forward_pass(x_val, training=False)
             val_loss = self.loss_function.compute(y_val, y_val_pred)
-            val_regularization_loss = self.regularization.compute_penalty(self.model)
-            val_loss += val_regularization_loss
 
             val_accuracy = Accuracy_metric.compute(y_val, y_val_pred)
             epoch_loss /= batches

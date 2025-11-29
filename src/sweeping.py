@@ -39,8 +39,18 @@ def train_sweep(
         activation_function = activation_functions.Tanh
     input_size = input_size
     prev_size = input_size
+    
     # hidden layers
-    for hidden_size in cfg.layer_sizes:
+    layer_sizes = []
+
+    try:
+        layer_sizes = cfg.layer_sizes
+    except AttributeError:
+        layer_sizes = [cfg.n_hidden_units] * cfg.num_hidden_layers
+
+
+
+    for hidden_size in layer_sizes:
         layers.append(
             layer.Layer(
                 input_size=prev_size,
