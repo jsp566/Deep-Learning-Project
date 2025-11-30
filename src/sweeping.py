@@ -20,7 +20,7 @@ import os
 def train_sweep(
     entity, project, config, x_train, y_train, x_valid, y_valid, input_size=28 * 28
 ):
-    wandb.init(entity=entity, project=project)
+    run = wandb.init(entity=entity, project=project)
     cfg = wandb.config
     # building layers dynamically
     if cfg.normalize_data:
@@ -110,7 +110,7 @@ def train_sweep(
         batch_size=cfg.batch_size,
         shuffle=True,
     )
-    filepath = os.path.join(logger.run.dir, "model.pkl")
+    filepath = os.path.join(run.dir, "model.pkl")
 
     with open(filepath, "wb") as output_file:
         pickle.dump(model, output_file)

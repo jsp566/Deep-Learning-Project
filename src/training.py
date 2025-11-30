@@ -93,7 +93,7 @@ class Trainer:
 
             print(f"Epoch {epoch+1}/{epochs} - Loss: {epoch_loss:.4f} - Val Loss: {val_loss:.4f} - Val Accuracy: {val_accuracy:.4f}")
         if self.logger is not None:
-            self.logger.finish()
+            self.logger.finish(self.model)
         return history
 
     def predict(self, X):

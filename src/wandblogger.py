@@ -1,5 +1,7 @@
 import wandb
 import numpy as np
+import os
+import pickle
 
 # config should be a dictionary containing hyperparameters and settings
 # initializer
@@ -112,5 +114,10 @@ class Logger:
         
         self.run.log(metrics)
 
-    def finish(self):
+    def finish(self, model):
+        filepath = os.path.join(self.run.dir, "model.pkl")
+
+        with open(filepath, "wb") as output_file:
+            pickle.dump(model, output_file)
+
         self.run.finish()
