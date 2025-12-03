@@ -91,10 +91,16 @@ def train_sweep(
         layers=layers,
     )
 
+    try:
+        loss_function = loss_functions.CrossEntropyLoss(cfg.label_smoothing)
+    except AttributeError:
+        loss_function = loss_functions.CrossEntropyLoss()   
+    
+
     logger = wandblogger.Logger(project)
     trainer = training.Trainer(
         model=model,
-        loss_function=loss_functions.CrossEntropyLoss(),
+        loss_function=loss_function,
         optimizer=optimizer,
         logger=logger,
         regularization=regularization.L2Regularization(cfg.l2_lambda),
