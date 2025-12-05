@@ -102,7 +102,7 @@ class Metrics:
 
         num_classes = cm.shape[0]
         tick_marks = np.arange(num_classes)
-        plt.xticks(tick_marks, class_names if class_names else tick_marks)
+        plt.xticks(tick_marks, class_names if class_names else tick_marks, rotation=45)
         plt.yticks(tick_marks, class_names if class_names else tick_marks)
 
         # Text labels added later (see fix below)
