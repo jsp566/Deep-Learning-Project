@@ -25,7 +25,7 @@ class HeInitializer(Initializer):
         self.a = a
     
     def initialize(self, shape):
-        stddev = np.sqrt(2. * self.a / shape[0])
+        stddev = np.sqrt(self.a / shape[0])
         return np.random.randn(*shape) * stddev
     
 class GlorotInitializer(Initializer):
